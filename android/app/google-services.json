@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "465535892564",
+    "project_id": "book-signin",
+    "storage_bucket": "book-signin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465535892564:android:7d862b123de0d1422bc1c1",
+        "android_client_info": {
+          "package_name": "com.jeels21.bookapp_signin_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "465535892564-2k9mf5h9lsg4qglch4jjb51mltal7ang.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jeels21.bookapp_signin_firebase",
+            "certificate_hash": "9dff5a87583b0ae4a6997d037c1bd45f0d5a1783"
+          }
+        },
+        {
+          "client_id": "465535892564-uvfq4l8mugoqj33olt9ibv2sopse11eo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSReSXkA-DzOzIF5Gc4lMbIj7nwhUNdnY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "465535892564-o7ghe6dalo9grepmq2scjfqk93spilvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
