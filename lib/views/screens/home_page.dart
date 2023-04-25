@@ -43,7 +43,16 @@ class _Home_PageState extends State<Home_Page> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: <Color>[
+                Color(0xff293957),
+                Color(0xff3d539c),
+              ],
+            ),
+          ),
+        ),
         title: const Text(
           "HOME PAGE",
           style: TextStyle(
@@ -198,7 +207,7 @@ class _Home_PageState extends State<Home_Page> {
                                         width: 70,
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
-                                          color: Colors.blue.shade200,
+                                          color: Colors.deepPurple.shade100,
                                           borderRadius:
                                               BorderRadius.circular(15),
                                         ),
@@ -244,90 +253,6 @@ class _Home_PageState extends State<Home_Page> {
                         ),
                       ),
                     );
-                    //   Card(
-                    //   child: ListTile(
-                    //     isThreeLine: true,
-                    //     leading: CircleAvatar(
-                    //       radius: 30,
-                    //       backgroundColor: Colors.blueGrey,
-                    //       backgroundImage: (allDocs[i].data()['image'] == null)
-                    //           ? null
-                    //           : MemoryImage(
-                    //               base64Decode(allDocs[i].data()['image']),
-                    //             ),
-                    //       child: (allDocs[i].data()['image'] == null)
-                    //           ? Text(
-                    //               allDocs[i].data()['book'].name[0],
-                    //               overflow: TextOverflow.ellipsis,
-                    //               style: const TextStyle(
-                    //                 fontSize: 25,
-                    //                 fontWeight: FontWeight.w600,
-                    //                 color: Colors.white,
-                    //               ),
-                    //             )
-                    //           : null,
-                    //     ),
-                    //     title: Text(
-                    //       allDocs[i].data()['book'],
-                    //       overflow: TextOverflow.ellipsis,
-                    //       style: GoogleFonts.poppins(
-                    //         textStyle: const TextStyle(
-                    //           fontSize: 20,
-                    //           fontWeight: FontWeight.w600,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     subtitle: Text(
-                    //       "${allDocs[i].data()['author']}",
-                    //       style: GoogleFonts.poppins(
-                    //         textStyle: const TextStyle(
-                    //           fontSize: 18,
-                    //           fontWeight: FontWeight.w400,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     trailing: Row(
-                    //       mainAxisSize: MainAxisSize.min,
-                    //       mainAxisAlignment: MainAxisAlignment.end,
-                    //       children: [
-                    //         IconButton(
-                    //           onPressed: () {
-                    //             Map<String, dynamic> updateData = {
-                    //               "book": allDocs[i].data()['book'],
-                    //               "author": allDocs[i].data()['author'],
-                    //               "image": allDocs[i].data()['image']!,
-                    //             };
-                    //             validateUpdate(
-                    //                 id: allDocs[i].id, data: updateData);
-                    //           },
-                    //           icon: const Icon(
-                    //             Icons.edit_outlined,
-                    //             color: Colors.blue,
-                    //           ),
-                    //         ),
-                    //         IconButton(
-                    //           onPressed: () async {
-                    //             await FirestoreHelper.firestoreHelper
-                    //                 .deleteRecords(id: allDocs[i].id);
-                    //
-                    //             ScaffoldMessenger.of(context).showSnackBar(
-                    //               const SnackBar(
-                    //                 content:
-                    //                     Text("Record Deleted Successfully..."),
-                    //                 backgroundColor: Colors.redAccent,
-                    //                 behavior: SnackBarBehavior.floating,
-                    //               ),
-                    //             );
-                    //           },
-                    //           icon: const Icon(
-                    //             Icons.delete_outline,
-                    //             color: Colors.red,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // );
                   },
                 ),
               );
@@ -340,9 +265,11 @@ class _Home_PageState extends State<Home_Page> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: validateInsert,
+        backgroundColor: const Color(0xff3d539c),
         child: const Icon(
           Icons.add,
           size: 30,
+          color: Colors.white,
         ),
       ),
     );
