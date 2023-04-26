@@ -228,16 +228,43 @@ class _Home_PageState extends State<Home_Page> {
                               ),
                               Expanded(
                                 child: IconButton(
-                                  onPressed: () async {
-                                    await FirestoreHelper.firestoreHelper
-                                        .deleteRecords(id: allDocs[i].id);
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Are you sure?'),
+                                        content: const Text(
+                                            'This action will permanently delete this data'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context, false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              await FirestoreHelper
+                                                  .firestoreHelper
+                                                  .deleteRecords(
+                                                      id: allDocs[i].id);
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            "Record Deleted Successfully..."),
-                                        backgroundColor: Colors.redAccent,
-                                        behavior: SnackBarBehavior.floating,
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Record Deleted Successfully..."),
+                                                  backgroundColor:
+                                                      Colors.redAccent,
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                ),
+                                              );
+
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
                                       ),
                                     );
                                   },
@@ -275,159 +302,174 @@ class _Home_PageState extends State<Home_Page> {
     );
   }
 
-  validateInsert() {
+  void validateInsert() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Center(
-          child: Text(
-            "Add Records",
-            style: TextStyle(
-              color: Colors.deepPurple,
-              fontWeight: FontWeight.w600,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Center(
+              child: Text(
+                "Add Records",
+                style: TextStyle(
+                  color: Colors.deepPurple,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
-        ),
-        content: Form(
-          key: insertFormKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: GestureDetector(
-                  onTap: () {
-                    getFromGallery();
-                  },
-                  child: CircleAvatar(
-                    radius: 70,
-                    backgroundColor: Colors.deepPurple.shade100,
-                    child: const Text(
-                      "ADD",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.deepPurple,
-                        fontWeight: FontWeight.w600,
+            content: Form(
+              key: insertFormKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: GestureDetector(
+                      onTap: () async {
+                        ImagePicker picker = ImagePicker();
+
+                        XFile? xFile = await picker.pickImage(
+                          source: ImageSource.gallery,
+                          imageQuality: 40,
+                        );
+
+                        imageBytes = await xFile!.readAsBytes();
+                        setState(() {});
+                      },
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.deepPurple.shade100,
+                        foregroundImage: (imageBytes != null)
+                            ? MemoryImage(imageBytes!)
+                            : null,
+                        child: const Text(
+                          "ADD",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  TextFormField(
+                    controller: bookController,
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return "Enter Book Name First.....";
+                      }
+                      return null;
+                    },
+                    onSaved: (val) {
+                      bookName = val;
+                    },
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      hintText: "Enter Book Name here....",
+                      labelText: "Book Name",
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(
+                          color: Colors.deepPurple,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: TextFormField(
+                      controller: authorController,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return "Enter Author Name First.....";
+                        }
+                        return null;
+                      },
+                      onSaved: (val) {
+                        authorName = val;
+                      },
+                      textInputAction: TextInputAction.done,
+                      decoration: InputDecoration(
+                        hintText: "Enter Author Name here....",
+                        labelText: "Author Name",
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: const BorderSide(
+                            color: Colors.deepPurple,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: bookController,
-                validator: (val) {
-                  if (val!.isEmpty) {
-                    return "Enter Book Name First.....";
+            ),
+            actions: [
+              OutlinedButton(
+                child: const Text("Add"),
+                onPressed: () async {
+                  if (insertFormKey.currentState!.validate()) {
+                    insertFormKey.currentState!.save();
+
+                    Map<String, dynamic> records = {
+                      "book": bookName,
+                      "author": authorName,
+                      "image": base64Encode(imageBytes!),
+                    };
+
+                    await FirestoreHelper.firestoreHelper
+                        .insertRecords(data: records);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Record Inserted Successfully..."),
+                        backgroundColor: Colors.green,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+
+                    bookController.clear();
+                    authorController.clear();
+
+                    setState(() {
+                      bookName = null;
+                      authorName = null;
+                      imageBytes = null;
+                    });
+
+                    Navigator.pop(context);
                   }
-                  return null;
                 },
-                onSaved: (val) {
-                  bookName = val;
-                },
-                textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
-                  hintText: "Enter Book Name here....",
-                  labelText: "Book Name",
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: const BorderSide(
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextFormField(
-                  controller: authorController,
-                  validator: (val) {
-                    if (val!.isEmpty) {
-                      return "Enter Author Name First.....";
-                    }
-                    return null;
-                  },
-                  onSaved: (val) {
-                    authorName = val;
-                  },
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    hintText: "Enter Author Name here....",
-                    labelText: "Author Name",
-                    enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: const BorderSide(
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-                  ),
-                ),
+              OutlinedButton(
+                child: const Text("Cancel"),
+                onPressed: () async {
+                  bookController.clear();
+                  authorController.clear();
+
+                  setState(() {
+                    bookName = null;
+                    authorName = null;
+                    imageBytes = null;
+                  });
+
+                  Navigator.pop(context);
+                },
               ),
             ],
-          ),
-        ),
-        actions: [
-          OutlinedButton(
-            child: const Text("Add"),
-            onPressed: () async {
-              if (insertFormKey.currentState!.validate()) {
-                insertFormKey.currentState!.save();
-
-                Map<String, dynamic> records = {
-                  "book": bookName,
-                  "author": authorName,
-                  "image": base64Encode(imageBytes!),
-                };
-
-                await FirestoreHelper.firestoreHelper
-                    .insertRecords(data: records);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Record Inserted Successfully..."),
-                    backgroundColor: Colors.green,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-
-                bookController.clear();
-                authorController.clear();
-
-                setState(() {
-                  bookName = null;
-                  authorName = null;
-                  imageBytes = null;
-                });
-
-                Navigator.pop(context);
-              }
-            },
-          ),
-          OutlinedButton(
-            child: const Text("Cancel"),
-            onPressed: () async {
-              bookController.clear();
-              authorController.clear();
-
-              setState(() {
-                bookName = null;
-                authorName = null;
-                imageBytes = null;
-              });
-
-              Navigator.pop(context);
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -457,8 +499,16 @@ class _Home_PageState extends State<Home_Page> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: GestureDetector(
-                  onTap: () {
-                    getFromGallery();
+                  onTap: () async {
+                    ImagePicker picker = ImagePicker();
+
+                    XFile? xFile = await picker.pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 40,
+                    );
+
+                    imageBytes = await xFile!.readAsBytes();
+                    setState(() {});
                   },
                   child: CircleAvatar(
                     radius: 70,
